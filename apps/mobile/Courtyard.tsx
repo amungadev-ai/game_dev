@@ -1,6 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {View,Text,Pressable,StyleSheet,PanResponder,AppState,ScrollView} from 'react-native';
 import {GLView, type ExpoWebGLRenderingContext} from 'expo-gl';
+import {loadRigSpike} from './rigSpike';
 import {createSeeker,animateSeeker} from './seeker';
 import {buildQuayScenery} from './quayScenery';
 import {sandstoneTexture} from './stoneTexture';
@@ -59,9 +60,11 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  const wings=[-1,1].map(side=>{const wing=box(.32,.06,.22,side*.24,0,0,0xffe7b0,pip);return wing;});
  pip.position.set(-1,1.3,5);
  let disposed=false;
+ let rig:Awaited<ReturnType<typeof loadRigSpike>>|undefined;
+ void loadRigSpike().then(r=>{if(disposed){r.mixer.stopAllAction();r.group.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}rig=r;r.group.position.set(-2,1,-4.25);scene.add(r.group);console.log('RIG: skinned mesh and animation clip loaded');}).catch(e=>console.warn('RIG: failed',String(e),e?.stack));
  void loadGeometryFixture().then(model=>{if(disposed){model.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}model.traverse(o=>{if(o instanceof THREE.Mesh){const g=o.geometry as THREE.BufferGeometry;const pos=g.getAttribute('position'),normal=g.getAttribute('normal');if(!g.getAttribute('uv')&&pos&&normal){const uv=new Float32Array(pos.count*2);for(let i=0;i<pos.count;i++){const nx=Math.abs(normal.getX(i)),ny=Math.abs(normal.getY(i));uv[i*2]=(nx>.5?pos.getZ(i):pos.getX(i))+.5;uv[i*2+1]=(ny>.5?pos.getZ(i):pos.getY(i))+.5;}g.setAttribute('uv',new THREE.BufferAttribute(uv,2));}const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(m instanceof THREE.MeshStandardMaterial){m.map=archTexture;m.needsUpdate=true;}});}});model.position.set(0,0,-4.48);scene.add(model);setAssetStatus('GLB: arch + textures assigned');}).catch(e=>{const detail=String(e)+'\n'+(typeof e?.stack==='string'?e.stack:'No stack available');console.log('GLB DIAGNOSTIC v3: '+detail);if(!disposed){setAssetStatus('GLB: failed — tap for details');setAssetError(detail);setShowAssetError(true);}});
  const target=new THREE.Vector3();camera.position.set(0,7,13);
- cleanup.current=()=>{disposed=true;floorTexture.dispose();archTexture.dispose();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>m.dispose());}});renderer.dispose();};
+ cleanup.current=()=>{disposed=true;if(rig){rig.mixer.stopAllAction();rig.mixer.uncacheRoot(rig.group);}floorTexture.dispose();archTexture.dispose();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>m.dispose());}});renderer.dispose();};
  let last=0,windowStart=0,count=0;
  function tick(now:number){
  if(!alive.current)return;
@@ -79,6 +82,7 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  if(Math.hypot(input.current.x,input.current.z)>.1)hero.rotation.y=Math.atan2(input.current.x,input.current.z);
  animateSeeker(avatar,Math.hypot(input.current.x,input.current.z)>.1,now/1000,dt);lamp.visible=!p.hasLamp;ring.visible=!p.hasLamp;lamp.rotation.y+=dt;lamp.position.y=.65+Math.sin(now/350)*.12;mark.visible=p.revealed;
  target.set(p.x,7,p.z+8);camera.position.lerp(target,1-Math.exp(-8*dt));camera.lookAt(p.x,.6,p.z-1);
+ rig?.mixer.update(dt);
  renderer.render(scene,camera);gl.endFrameEXP();
  if(!windowStart)windowStart=now;count++;if(now-windowStart>=1000){setFps(Math.round(count*1000/(now-windowStart)));windowStart=now;count=0;}
  }
