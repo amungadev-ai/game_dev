@@ -43,7 +43,7 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  const camera=new THREE.PerspectiveCamera(55,gl.drawingBufferWidth/gl.drawingBufferHeight,.1,60);
  scene.add(new THREE.HemisphereLight(0xfff0d0,0x536b70,1.65));
  const sun=new THREE.DirectionalLight(0xffe2b0,2.2);sun.position.set(5,10,4);scene.add(sun);
- buildQuayScenery(scene);
+ const scenery=buildQuayScenery(scene);
  const effects=createDiscoveryEffects(scene);
  let previousLamp=player.current.hasLamp,previousReveal=player.current.revealed,noticeTime=0;
  setDiscovery('');
@@ -70,7 +70,7 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  void loadRigSpike().then(r=>{if(disposed){r.controller.dispose();r.group.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}rig=r;r.group.position.set(-2,1,-4.25);scene.add(r.group);console.log('RIG: skinned mesh and animation clip loaded');}).catch(e=>console.warn('RIG: failed',String(e),e?.stack));
  void loadGeometryFixture().then(model=>{if(disposed){model.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}model.traverse(o=>{if(o instanceof THREE.Mesh){const g=o.geometry as THREE.BufferGeometry;const pos=g.getAttribute('position'),normal=g.getAttribute('normal');if(!g.getAttribute('uv')&&pos&&normal){const uv=new Float32Array(pos.count*2);for(let i=0;i<pos.count;i++){const nx=Math.abs(normal.getX(i)),ny=Math.abs(normal.getY(i));uv[i*2]=(nx>.5?pos.getZ(i):pos.getX(i))+.5;uv[i*2+1]=(ny>.5?pos.getZ(i):pos.getY(i))+.5;}g.setAttribute('uv',new THREE.BufferAttribute(uv,2));}const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(m instanceof THREE.MeshStandardMaterial){m.map=archTexture;m.needsUpdate=true;}});}});model.position.set(0,0,-4.48);scene.add(model);setAssetStatus('GLB: arch + textures assigned');}).catch(e=>{const detail=String(e)+'\n'+(typeof e?.stack==='string'?e.stack:'No stack available');console.log('GLB DIAGNOSTIC v3: '+detail);if(!disposed){setAssetStatus('GLB: failed — tap for details');setAssetError(detail);setShowAssetError(true);}});
  const target=new THREE.Vector3();camera.position.set(0,7,13);
- cleanup.current=()=>{disposed=true;effects.dispose();if(rig){rig.controller.dispose();}floorTexture.dispose();archTexture.dispose();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>m.dispose());}});renderer.dispose();};
+ cleanup.current=()=>{disposed=true;effects.dispose();if(rig){rig.controller.dispose();}floorTexture.dispose();archTexture.dispose();scene.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.LineSegments){o.geometry.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>m.dispose());}});renderer.dispose();};
  let last=0,windowStart=0,count=0;
  function tick(now:number){
  if(!alive.current)return;
@@ -85,7 +85,7 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  else if(p.hasLamp&&!previousLamp){effects.trigger(3,.12,2);setDiscovery('WAYLAMP DISCOVERED');noticeTime=3;}
  previousLamp=p.hasLamp;previousReveal=p.revealed;
  if(noticeTime>0){noticeTime-=dt;if(noticeTime<=0)setDiscovery('');}
- effects.update(dt);
+ effects.update(dt);scenery.update(dt);
  if(jump.current.height>0||jump.current.velocity>0){jump.current.velocity-=14*dt;jump.current.height=Math.max(0,jump.current.height+jump.current.velocity*dt);if(jump.current.height===0)jump.current.velocity=0;}
  hero.position.set(p.x,jump.current.height,p.z);
  pip.position.x+=(p.x-1.1-pip.position.x)*(1-Math.exp(-4*dt));pip.position.z+=(p.z+.6-pip.position.z)*(1-Math.exp(-4*dt));pip.position.y=1.25+Math.sin(now/240)*.16;
