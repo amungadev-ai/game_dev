@@ -22,3 +22,5 @@ apps/mobile/assetSpike.ts constructs an original geometry-only GLB in memory and
 
 ## GLB validation update
 Founder confirmed GLB: loaded after commit 9c660e9. GLTFParser constructor previously threw indexOf of undefined on Hermes; guarded navigator.userAgent adapter resolved reported failure. Keep Three r162 and adapter. Geometry-only loading validated; actual bundled assets, textures, rigging and performance remain unvalidated.
+
+- Architecture spike: original in-memory GLB sandstone arch, shared cube geometry with normals, 27 masonry nodes and three material colors; placed in front of existing wall, collision unchanged. No external file, textures or carved mesh detail yet. Test GLB: arch loaded, visible arch, discovery and FPS. Compile/device validation pending. No expenditure.
