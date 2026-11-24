@@ -19,3 +19,6 @@ Every change updates development log with commit, files, rationale, commands, ac
 
 ## Latest asset spike
 apps/mobile/assetSpike.ts constructs an original geometry-only GLB in memory and parses via GLTFLoader. Courtyard displays a triangular plaque and loader status. This tests binary parsing only, not bundled files, texture decoding or rigged animation. No paid tools approved. Device validation pending; next gate is GLB: loaded and visible plaque, then actual modular arch and rigged model.
+
+## GLB validation update
+Founder confirmed GLB: loaded after commit 9c660e9. GLTFParser constructor previously threw indexOf of undefined on Hermes; guarded navigator.userAgent adapter resolved reported failure. Keep Three r162 and adapter. Geometry-only loading validated; actual bundled assets, textures, rigging and performance remain unvalidated.
