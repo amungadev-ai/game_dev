@@ -7,3 +7,5 @@ Historical reconstruction from conversation and repository; not a substitute for
 - 2026-11-24: handover and art pipeline documented. No new runtime code or device tests in this documentation change.
 
 - GLB spike: 7f72c95 records zero additional spend; e676bfd adds original embedded geometry-only GLB fixture; courtyard integrates async loader, status and disposal. No texture, rig, external file or device validation yet. Run npm test/typecheck and check GLB: loaded on both devices. If failure record exact error; procedural scene remains.
+
+- Device report: GLB TypeError cannot read property indexOf of undefined. Root cause unconfirmed. Normalize parser base path and fixture metadata; log full exception to Metro. Retest; if unresolved obtain stack before changing dependencies. No paid services.
