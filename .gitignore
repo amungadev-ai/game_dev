@@ -1,0 +1,35 @@
+# Secrets and environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.mobileprovision
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Expo / React Native
+.expo/
+.expo-shared/
+dist/
+web-build/
+android/
+ios/
+*.apk
+*.aab
+*.ipa
+
+# System / editor
+.DS_Store
+Thumbs.db
+.vscode/*.log
+.idea/
+
+# Temporary & logs
+*.log
+coverage/
+tmp/
+temp/
