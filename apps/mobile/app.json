@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Treasure Hunt",
+    "slug": "treasure-hunt",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.treasurehunt.prototype"
+    },
+    "ios": {
+      "bundleIdentifier": "com.treasurehunt.prototype"
+    }
+  }
+}
