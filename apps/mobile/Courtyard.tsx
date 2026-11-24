@@ -1,6 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {View,Text,Pressable,StyleSheet,PanResponder,AppState,ScrollView} from 'react-native';
 import {GLView, type ExpoWebGLRenderingContext} from 'expo-gl';
+import {sandstoneTexture} from './stoneTexture';
 import {loadGeometryFixture} from './assetSpike';
 import {useLan} from './lan';
 import * as THREE from 'three';
@@ -38,7 +39,10 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  const sun=new THREE.DirectionalLight(0xffe2b0,2);sun.position.set(5,10,4);scene.add(sun);
  function box(w:number,h:number,d:number,x:number,y:number,z:number,color:number,parent:THREE.Object3D=scene){
  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color}));m.position.set(x,y,z);parent.add(m);return m;}
- box(16,.3,16,0,-.15,0,0xb9a17c);
+ const floor=box(16,.3,16,0,-.15,0,0xb9a17c);
+ const floorTexture=sandstoneTexture(8),archTexture=sandstoneTexture();
+ (floor.material as THREE.MeshStandardMaterial).map=floorTexture;
+ (floor.material as THREE.MeshStandardMaterial).needsUpdate=true;
  for(let i=-7;i<=7;i+=2){box(.035,.012,16,i,.01,0,0x8e8069);box(16,.012,.035,0,.01,i,0x8e8069);}
  obstacles.forEach(o=>box(o.w,o.w===5?3:2.5,o.d,o.x,o.w===5?1.5:1.25,o.z,0xd2b58b));
  // Decorative elements remain outside the navigable collision layout.
@@ -71,9 +75,9 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  const wings=[-1,1].map(side=>{const wing=box(.32,.06,.22,side*.24,0,0,0xffe7b0,pip);return wing;});
  pip.position.set(-1,1.3,5);
  let disposed=false;
- void loadGeometryFixture().then(model=>{if(disposed){model.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}model.position.set(0,0,-4.48);scene.add(model);setAssetStatus('GLB: arch loaded');}).catch(e=>{const detail=String(e)+'\n'+(typeof e?.stack==='string'?e.stack:'No stack available');console.log('GLB DIAGNOSTIC v3: '+detail);if(!disposed){setAssetStatus('GLB: failed — tap for details');setAssetError(detail);setShowAssetError(true);}});
+ void loadGeometryFixture().then(model=>{if(disposed){model.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}model.traverse(o=>{if(o instanceof THREE.Mesh){const g=o.geometry as THREE.BufferGeometry;const pos=g.getAttribute('position'),normal=g.getAttribute('normal');if(!g.getAttribute('uv')&&pos&&normal){const uv=new Float32Array(pos.count*2);for(let i=0;i<pos.count;i++){const nx=Math.abs(normal.getX(i)),ny=Math.abs(normal.getY(i));uv[i*2]=(nx>.5?pos.getZ(i):pos.getX(i))+.5;uv[i*2+1]=(ny>.5?pos.getZ(i):pos.getY(i))+.5;}g.setAttribute('uv',new THREE.BufferAttribute(uv,2));}const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(m instanceof THREE.MeshStandardMaterial){m.map=archTexture;m.needsUpdate=true;}});}});model.position.set(0,0,-4.48);scene.add(model);setAssetStatus('GLB: arch + textures assigned');}).catch(e=>{const detail=String(e)+'\n'+(typeof e?.stack==='string'?e.stack:'No stack available');console.log('GLB DIAGNOSTIC v3: '+detail);if(!disposed){setAssetStatus('GLB: failed — tap for details');setAssetError(detail);setShowAssetError(true);}});
  const target=new THREE.Vector3();camera.position.set(0,7,13);
- cleanup.current=()=>{disposed=true;scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>m.dispose());}});renderer.dispose();};
+ cleanup.current=()=>{disposed=true;floorTexture.dispose();archTexture.dispose();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>m.dispose());}});renderer.dispose();};
  let last=0,windowStart=0,count=0;
  function tick(now:number){
  if(!alive.current)return;
