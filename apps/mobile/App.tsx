@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { Pressable, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Courtyard from './Courtyard';
 import { initialState, advance } from '../../packages/game-core/discovery.mjs';
 
-export default function App() {
+export default function App() { return <SafeAreaProvider><Game /></SafeAreaProvider>; }
+function Game() {
+  const [show3d,setShow3d]=useState(false);
   const [state, setState] = useState(initialState);
+  if(show3d)return <SafeAreaView style={styles.safe}><Courtyard onBack={()=>setShow3d(false)}/></SafeAreaView>;
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" />
@@ -19,6 +24,7 @@ export default function App() {
         <Pressable accessibilityRole="button" style={({pressed}) => [styles.button, pressed && {opacity:0.8}]} onPress={() => setState(s => advance(s))}>
           <Text style={styles.buttonText}>{state.revealed ? 'Restart experiment' : state.hasLamp ? 'Reveal hidden markings' : 'Discover the Waylamp'}</Text>
         </Pressable>
+        <Pressable style={styles.button} onPress={()=>setShow3d(true)}><Text style={styles.buttonText}>Enter Lantern Quay (3D)</Text></Pressable>
         <Text style={styles.footer}>Prototype 01 · Interaction logic · No accounts or network</Text>
       </View>
     </SafeAreaView>
