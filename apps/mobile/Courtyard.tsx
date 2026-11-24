@@ -1,6 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {View,Text,Pressable,StyleSheet,PanResponder,AppState,ScrollView} from 'react-native';
 import {GLView, type ExpoWebGLRenderingContext} from 'expo-gl';
+import {buildQuayScenery} from './quayScenery';
 import {sandstoneTexture} from './stoneTexture';
 import {loadGeometryFixture} from './assetSpike';
 import {useLan} from './lan';
@@ -33,10 +34,11 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  } as unknown as NonNullable<THREE.WebGLRendererParameters['canvas']>;
  const renderer=new THREE.WebGLRenderer({canvas,context:gl as unknown as NonNullable<THREE.WebGLRendererParameters['context']>,antialias:false});
  renderer.setSize(gl.drawingBufferWidth,gl.drawingBufferHeight,false);
- const scene=new THREE.Scene();scene.background=new THREE.Color('#8ca9b3');scene.fog=new THREE.Fog('#8ca9b3',18,45);
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#a8c6cb');scene.fog=new THREE.Fog('#a8c6cb',19,45);
  const camera=new THREE.PerspectiveCamera(55,gl.drawingBufferWidth/gl.drawingBufferHeight,.1,60);
- scene.add(new THREE.HemisphereLight(0xfff0d0,0x536b70,2));
- const sun=new THREE.DirectionalLight(0xffe2b0,2);sun.position.set(5,10,4);scene.add(sun);
+ scene.add(new THREE.HemisphereLight(0xfff0d0,0x536b70,1.65));
+ const sun=new THREE.DirectionalLight(0xffe2b0,2.2);sun.position.set(5,10,4);scene.add(sun);
+ buildQuayScenery(scene);
  function box(w:number,h:number,d:number,x:number,y:number,z:number,color:number,parent:THREE.Object3D=scene){
  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color}));m.position.set(x,y,z);parent.add(m);return m;}
  const floor=box(16,.3,16,0,-.15,0,0xb9a17c);
@@ -45,11 +47,6 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  (floor.material as THREE.MeshStandardMaterial).needsUpdate=true;
  for(let i=-7;i<=7;i+=2){box(.035,.012,16,i,.01,0,0x8e8069);box(16,.012,.035,0,.01,i,0x8e8069);}
  obstacles.forEach(o=>box(o.w,o.w===5?3:2.5,o.d,o.x,o.w===5?1.5:1.25,o.z,0xd2b58b));
- // Decorative elements remain outside the navigable collision layout.
- for(const x of [-7.8,7.8])for(const z of [-6,-2,2,6]){
- box(.5,1.2,.5,x,.6,z,0x92734d);
- const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(.85,0),new THREE.MeshStandardMaterial({color:0x537d57}));crown.position.set(x,1.7,z);scene.add(crown);
- }
  for(const x of [-2.3,2.3]){box(.45,3.2,.85,x,1.6,-5,0xc4a27a);box(.65,.25,1,x,3.15,-5,0xe2c69b);}
  box(5.2,.25,.9,0,3.05,-5,0xe2c69b);
  function seeker(color:number){
