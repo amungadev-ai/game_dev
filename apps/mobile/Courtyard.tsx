@@ -71,7 +71,7 @@ export default function Courtyard({onBack,url,collection,onCollect}:{onBack:()=>
  const wings=[-1,1].map(side=>{const wing=box(.32,.06,.22,side*.24,0,0,0xffe7b0,pip);return wing;});
  pip.position.set(-1,1.3,5);
  let disposed=false;
- void loadGeometryFixture().then(model=>{if(disposed){model.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}model.position.set(-2,1.1,-4.55);scene.add(model);setAssetStatus('GLB: loaded');}).catch(e=>{const detail=String(e)+'\n'+(typeof e?.stack==='string'?e.stack:'No stack available');console.log('GLB DIAGNOSTIC v3: '+detail);if(!disposed){setAssetStatus('GLB: failed — tap for details');setAssetError(detail);setShowAssetError(true);}});
+ void loadGeometryFixture().then(model=>{if(disposed){model.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});return;}model.position.set(0,0,-4.48);scene.add(model);setAssetStatus('GLB: arch loaded');}).catch(e=>{const detail=String(e)+'\n'+(typeof e?.stack==='string'?e.stack:'No stack available');console.log('GLB DIAGNOSTIC v3: '+detail);if(!disposed){setAssetStatus('GLB: failed — tap for details');setAssetError(detail);setShowAssetError(true);}});
  const target=new THREE.Vector3();camera.position.set(0,7,13);
  cleanup.current=()=>{disposed=true;scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>m.dispose());}});renderer.dispose();};
  let last=0,windowStart=0,count=0;
