@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {CharacterAnimation} from './characterAnimation';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 // Original two-bone skinned geometry and embedded animation test.
 export async function loadRigSpike(){
@@ -24,6 +25,10 @@ export async function loadRigSpike(){
  const gltf=await new Promise<import('three/examples/jsm/loaders/GLTFLoader.js').GLTF>((resolve,reject)=>new GLTFLoader().parse(buffer,'./',resolve,reject));
  let skinned=false;gltf.scene.traverse(o=>{if(o instanceof THREE.SkinnedMesh){skinned=true;o.frustumCulled=false;}});
  if(!skinned||!gltf.animations.length)throw new Error('Rig spike missing skin or clip');
- const mixer=new THREE.AnimationMixer(gltf.scene);mixer.clipAction(gltf.animations[0]).play();
- return {group:gltf.scene,mixer};
+ const walk=gltf.animations[0].clone();walk.name='walk';
+ const idle=new THREE.AnimationClip('idle',2,[]);
+ const run=walk.clone();run.name='run';run.duration=1;for(const track of run.tracks)track.scale(.5);
+ const controller=new CharacterAnimation(gltf.scene,[idle,walk,run]);
+ controller.setState('walk');
+ return {group:gltf.scene,controller};
 }
