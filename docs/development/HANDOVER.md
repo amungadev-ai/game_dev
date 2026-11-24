@@ -16,3 +16,6 @@ Founder confirmed initial solo render smooth, reported 90 FPS; two devices conne
 Run tests/typecheck and integrated two-device acceptance before further merge. Then imported GLB asset spike with one rigged character and one modular prop; measure loading, memory, frame time, heat and fallback. Persistent local collection and cooperative chamber remain pending. Production networking evaluation (Colyseus or equivalent) remains open.
 ## Handover rule
 Every change updates development log with commit, files, rationale, commands, actual results, known issues and next action. Record decisions separately. Keep credentials and child data out of repository.
+
+## Latest asset spike
+apps/mobile/assetSpike.ts constructs an original geometry-only GLB in memory and parses via GLTFLoader. Courtyard displays a triangular plaque and loader status. This tests binary parsing only, not bundled files, texture decoding or rigged animation. No paid tools approved. Device validation pending; next gate is GLB: loaded and visible plaque, then actual modular arch and rigged model.
