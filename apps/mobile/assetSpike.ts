@@ -1,4 +1,5 @@
 // Bundled model package; binary GLB reconstructed without browser fetch or decoding.
+import {readBundledArch} from './nativeModel';
 import arch from './assets/lantern-quay-arch.json';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type {Group} from 'three';
@@ -14,6 +15,12 @@ function ensureLoaderEnvironment(){
 }
 export async function loadGeometryFixture():Promise<Group>{
  ensureLoaderEnvironment();
+ try{
+  const native=await readBundledArch();
+  const group=await new Promise<Group>((resolve,reject)=>new GLTFLoader().parse(native,'./',g=>resolve(g.scene),reject));
+  console.log('GLB SOURCE: native binary asset');
+  return group;
+ }catch(error){console.warn('GLB SOURCE: JSON fallback',String(error));}
  const gltf=arch.gltf;
  const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
  const encoded=arch.binaryBase64;
