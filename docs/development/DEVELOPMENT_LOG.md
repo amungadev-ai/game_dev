@@ -17,3 +17,5 @@ Historical reconstruction from conversation and repository; not a substitute for
 - Founder confirmed GLB: loaded on Android after 9c660e9 userAgent adapter. Geometry-only binary parsing validated; plaque visibility, FPS, textures, external files and skeletal animation not separately confirmed. Next: bundled modular architecture asset and texture/animation validation. No additional expenditure.
 
 - Architecture spike: original in-memory GLB sandstone arch, shared cube geometry with normals, 27 masonry nodes and three material colors; placed in front of existing wall, collision unchanged. No external file, textures or carved mesh detail yet. Test GLB: arch loaded, visible arch, discovery and FPS. Compile/device validation pending. No expenditure.
+
+- Founder confirmed sandstone arch is in place on device after 1927eed / 5fe0f16. Multi-node GLB geometry and visible architecture validated by report. FPS, collision/discovery regression, external files and textures not separately confirmed. Next: texture/material compatibility spike. No additional expenditure.
