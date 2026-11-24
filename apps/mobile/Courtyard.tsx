@@ -1,7 +1,6 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {View,Text,Pressable,StyleSheet,PanResponder,AppState} from 'react-native';
 import {GLView, type ExpoWebGLRenderingContext} from 'expo-gl';
-import {Renderer} from 'expo-three';
 import * as THREE from 'three';
 import {initialPlayer,move,interact,obstacles} from '../../packages/game-core/courtyard.mjs';
 
@@ -18,7 +17,14 @@ export default function Courtyard({onBack}:{onBack:()=>void}){
  function setup(gl:ExpoWebGLRenderingContext){
  try{
  cancelAnimationFrame(frame.current);cleanup.current();
- const renderer=new Renderer({gl});renderer.setSize(gl.drawingBufferWidth,gl.drawingBufferHeight);
+ const canvas = {
+ width:gl.drawingBufferWidth,height:gl.drawingBufferHeight,
+ clientWidth:gl.drawingBufferWidth,clientHeight:gl.drawingBufferHeight,
+ style:{},addEventListener:()=>{},removeEventListener:()=>{},
+ getContext:()=>gl
+ } as unknown as NonNullable<THREE.WebGLRendererParameters['canvas']>;
+ const renderer=new THREE.WebGLRenderer({canvas,context:gl as unknown as NonNullable<THREE.WebGLRendererParameters['context']>,antialias:false});
+ renderer.setSize(gl.drawingBufferWidth,gl.drawingBufferHeight,false);
  const scene=new THREE.Scene();scene.background=new THREE.Color('#8ca9b3');scene.fog=new THREE.Fog('#8ca9b3',18,45);
  const camera=new THREE.PerspectiveCamera(55,gl.drawingBufferWidth/gl.drawingBufferHeight,.1,60);
  scene.add(new THREE.HemisphereLight(0xfff0d0,0x536b70,2));
