@@ -10,3 +10,6 @@ Hero 5k–12k triangles, NPC 3k–8k, prop 300–3k, hero texture atlas 1024px, 
 Load asset offline from bundle, no blank scene, correct scale/orientation, animation clips play, textures correct, collision unchanged, solo and LAN work, fallback on load failure, 10-minute device test with FPS/frame-time and heat observations. Compare against procedural baseline. Record exact device and build. If loader fails, test geometry-only asset then texture pipeline; if rendering ceiling persists evaluate WebGL2/native engine without replacing shared game rules.
 ## Milestones
 A: one imported prop and rigged Seeker; B: modular Lantern Quay kit and terrain; C: Waylamp/Pip and effects; D: art polish and cooperative chamber. These are planned, not completed.
+
+## Financial constraint
+Founder approved continuing without additional expenditure. Triangle budgets are geometry counts, not money. Use free/open-source tools and original or appropriately licensed assets. Obtain explicit founder approval before any paid asset, service or subscription.
