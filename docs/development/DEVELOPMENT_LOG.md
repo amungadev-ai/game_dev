@@ -19,3 +19,5 @@ Historical reconstruction from conversation and repository; not a substitute for
 - Architecture spike: original in-memory GLB sandstone arch, shared cube geometry with normals, 27 masonry nodes and three material colors; placed in front of existing wall, collision unchanged. No external file, textures or carved mesh detail yet. Test GLB: arch loaded, visible arch, discovery and FPS. Compile/device validation pending. No expenditure.
 
 - Founder confirmed sandstone arch is in place on device after 1927eed / 5fe0f16. Multi-node GLB geometry and visible architecture validated by report. FPS, collision/discovery regression, external files and textures not separately confirmed. Next: texture/material compatibility spike. No additional expenditure.
+
+- Texture spike: stoneTexture.ts creates deterministic 128x128 RGBA DataTexture; courtyard applies tiled floor map and arch face-projected UVs, shared arch map, texture disposal. No external image decoding, normal maps or file imports tested. Status indicates assignment only; visual confirmation and FPS needed. No dependencies or expenditure. Compile/device validation pending.
