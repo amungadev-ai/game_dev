@@ -11,3 +11,5 @@ Historical reconstruction from conversation and repository; not a substitute for
 - Device report: GLB TypeError cannot read property indexOf of undefined. Root cause unconfirmed. Normalize parser base path and fixture metadata; log full exception to Metro. Retest; if unresolved obtain stack before changing dependencies. No paid services.
 
 - GLB metadata retry failed on device; Metro only showed expected WebGL1 deprecation warnings. Outer promise rejection now logs stack and opens selectable scrollable diagnostic overlay (v3). Await exact stack; root cause still unconfirmed. No dependency changes.
+
+- Diagnostic v3 captured TypeError indexOf of undefined in GLTFParser constructor on Android Hermes. Leading hypothesis: missing navigator.userAgent in browser detection. Add guarded userAgent compatibility adapter before parse; preserve existing string and Three r162. Removed nonstandard buffer type field. Retest geometry fixture; texture support remains separate. Fix not yet validated.
