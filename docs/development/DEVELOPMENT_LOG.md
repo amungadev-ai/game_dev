@@ -13,3 +13,5 @@ Historical reconstruction from conversation and repository; not a substitute for
 - GLB metadata retry failed on device; Metro only showed expected WebGL1 deprecation warnings. Outer promise rejection now logs stack and opens selectable scrollable diagnostic overlay (v3). Await exact stack; root cause still unconfirmed. No dependency changes.
 
 - Diagnostic v3 captured TypeError indexOf of undefined in GLTFParser constructor on Android Hermes. Leading hypothesis: missing navigator.userAgent in browser detection. Add guarded userAgent compatibility adapter before parse; preserve existing string and Three r162. Removed nonstandard buffer type field. Retest geometry fixture; texture support remains separate. Fix not yet validated.
+
+- Founder confirmed GLB: loaded on Android after 9c660e9 userAgent adapter. Geometry-only binary parsing validated; plaque visibility, FPS, textures, external files and skeletal animation not separately confirmed. Next: bundled modular architecture asset and texture/animation validation. No additional expenditure.
