@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
-import { Pressable, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StatusBar, TextInput, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Courtyard from './Courtyard';
+import Sanctuary,{type Collection} from './Sanctuary';
 import { initialState, advance } from '../../packages/game-core/discovery.mjs';
 
 export default function App() { return <SafeAreaProvider><Game /></SafeAreaProvider>; }
 function Game() {
   const [show3d,setShow3d]=useState(false);
+  const [showSanctuary,setShowSanctuary]=useState(false);
+  const [collection,setCollection]=useState<Collection>({hasLamp:false,revealed:false});
+  const [host,setHost]=useState('192.168.0.101');const [lanUrl,setLanUrl]=useState<string|undefined>();
   const [state, setState] = useState(initialState);
-  if(show3d)return <SafeAreaView style={styles.safe}><Courtyard onBack={()=>setShow3d(false)}/></SafeAreaView>;
+  if(showSanctuary)return <SafeAreaView style={styles.safe}><Sanctuary collection={collection} onBack={()=>setShowSanctuary(false)}/></SafeAreaView>;
+  if(show3d)return <SafeAreaView style={styles.safe}><Courtyard collection={collection} onCollect={c=>setCollection(old=>({hasLamp:old.hasLamp||c.hasLamp,revealed:old.revealed||c.revealed}))} url={lanUrl} onBack={()=>setShow3d(false)}/></SafeAreaView>;
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" />
-      <View style={styles.page}>
+      <ScrollView contentContainerStyle={styles.page}>
         <Text style={styles.eyebrow}>TREASURE HUNT • DEVELOPMENT BUILD</Text>
         <Text style={styles.title}>The Forgotten Wall</Text>
         <Text style={styles.subtitle}>Every discovery opens another possibility.</Text>
@@ -24,15 +29,17 @@ function Game() {
         <Pressable accessibilityRole="button" style={({pressed}) => [styles.button, pressed && {opacity:0.8}]} onPress={() => setState(s => advance(s))}>
           <Text style={styles.buttonText}>{state.revealed ? 'Restart experiment' : state.hasLamp ? 'Reveal hidden markings' : 'Discover the Waylamp'}</Text>
         </Pressable>
-        <Pressable style={styles.button} onPress={()=>setShow3d(true)}><Text style={styles.buttonText}>Enter Lantern Quay (3D)</Text></Pressable>
-        <Text style={styles.footer}>Prototype 01 · Interaction logic · No accounts or network</Text>
-      </View>
+        <Pressable style={styles.button} onPress={()=>{setLanUrl(undefined);setShow3d(true);}}><Text style={styles.buttonText}>Enter Lantern Quay (3D)</Text></Pressable>
+        <TextInput value={host} onChangeText={setHost} autoCapitalize="none" autoCorrect={false} style={{color:"white",borderWidth:1,borderColor:"#526A6B",padding:10}} placeholder="Laptop LAN IP"/><Pressable style={styles.button} onPress={()=>{setLanUrl("http://"+host.trim()+":2567");setShow3d(true);}}><Text style={styles.buttonText}>Join local multiplayer</Text></Pressable>
+        <Pressable style={styles.button} onPress={()=>setShowSanctuary(true)}><Text style={styles.buttonText}>Visit Living Sanctuary</Text></Pressable>
+        <Text style={styles.footer}>Development build · Session-only collection</Text>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 const styles=StyleSheet.create({
  safe:{flex:1,backgroundColor:'#101E28'},
- page:{flex:1,padding:24,justifyContent:'center',gap:16},
+ page:{flexGrow:1,padding:24,justifyContent:'center',gap:16},
  eyebrow:{color:'#E7BC72',fontSize:11,letterSpacing:1.2,fontWeight:'700'},
  title:{fontSize:34,fontWeight:'800',color:'#FFF6E5'},
  subtitle:{color:'#B9CCC8',fontSize:16},

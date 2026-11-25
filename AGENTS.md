@@ -43,3 +43,6 @@ Build a globally ambitious, original, family-trusted, entertainment-first advent
 - C — Living Sanctuary: display discoveries and nurture a seed; verify that players care about ownership.
 
 Theoretical targets are provisional. Test with appropriate consent/assent and do not overinterpret small samples.
+
+## Mandatory handover workflow
+Before changing code read docs/development/HANDOVER.md, DEVELOPMENT_LOG.md and ART_PIPELINE.md where relevant. After each implementation update the log with files, commit references, rationale, commands, observed test evidence, limitations and next action; update handover when architecture or status changes. Never equate implementation with validation. Preserve founder-approved constraints and avoid exposing credentials or child data. Keep PR 3 open until integrated validation.
